@@ -1,0 +1,32 @@
+{
+  "name": "openai-playground",
+  "version": "0.0.0",
+  "description": "OpenAI playground",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node ./src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jchpro/openai-playground.git"
+  },
+  "keywords": [
+    "openai",
+    "playground",
+    "node"
+  ],
+  "author": "jakub@jchpro.pl",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/jchpro/openai-playground/issues"
+  },
+  "homepage": "https://github.com/jchpro/openai-playground#readme",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.2",
+    "openai": "^4.25.0"
+  }
+}
