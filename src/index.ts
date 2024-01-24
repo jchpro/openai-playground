@@ -7,7 +7,6 @@ if (!process.env.OPENAI_API_KEY) {
   throw '"OPENAI_API_KEY" environment variable is not defined';
 }
 
-
 const program = new Command()
   .name('OpenAI API playground')
   .description('Messing around with OpenAI API');

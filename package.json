@@ -3,8 +3,13 @@
   "version": "0.0.0",
   "description": "OpenAI playground",
   "main": "dist/index.js",
+  "bin": {
+    "aifun": "dist/index.js"
+  },
   "scripts": {
-    "start": "ts-node ./src/index.ts"
+    "start": "ts-node ./src/index.ts",
+    "build": "tsc",
+    "start:dist": ""
   },
   "repository": {
     "type": "git",
