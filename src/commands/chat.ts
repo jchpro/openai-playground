@@ -1,7 +1,8 @@
 import OpenAI from "openai";
 import { ChatCompletion } from "openai/resources";
 import { ChatCompletionMessageParam } from "openai/src/resources/chat/completions";
-import { done, question } from "../common/readline";
+import { question } from "../common/readline";
+import { getBaseChatConfig } from "../common/chats";
 
 const openai = new OpenAI();
 
@@ -55,7 +56,6 @@ export async function chat(options: {
   }
 
   console.log('Exiting, bye!');
-  done();
 }
 
 async function getChatCompletion(messages: ChatCompletionMessageParam[]): Promise<ChatCompletion | undefined> {
@@ -90,10 +90,3 @@ function getSystemMessage(userName?: string): string {
     .join(' ')
 }
 
-function getBaseChatConfig(messages: ChatCompletionMessageParam[]) {
-  return {
-    messages,
-    model: 'gpt-3.5-turbo',
-    n: 1,
-  };
-}
