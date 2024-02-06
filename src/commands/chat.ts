@@ -1,10 +1,8 @@
-import OpenAI from "openai";
 import { ChatCompletion } from "openai/resources";
 import { ChatCompletionMessageParam } from "openai/src/resources/chat/completions";
-import { question } from "../common/readline";
 import { getBaseChatConfig } from "../common/chats";
-
-const openai = new OpenAI();
+import { openai } from "../common/openai";
+import { question } from "../common/readline";
 
 export async function chat(options: {
   readonly name?: string;

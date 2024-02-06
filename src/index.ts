@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { configDotenv } from "dotenv";
 configDotenv();
 import { chat } from "./commands/chat";
+import { functionCalling } from "./commands/function-calling";
 import { jsonMode } from "./commands/json-mode";
 import { done } from "./common/readline";
 
@@ -25,6 +26,12 @@ program
   .description('Returns output in JSON format. For a provided `country`, model should return object with keys being names of the biggest cities of that country, and values their populations. By setting the same `seed` and `temperature` in each request, the output should be always the same for a given country.')
   .argument('country', 'Name of the country')
   .action(jsonMode);
+
+program
+  .command('fnCalling')
+  .description('Demonstrates function calling capability. As first step, chat generates a very simple "repository" containing made-up persons data using JSON mode. Then you can do some stuff with that data, like filter it in some way, or output it in some other format, using chat interface instead of manually running commands.')
+  .option('-a, --addMore', 'If set, each time you load the repository from JSON file, new batch of persons will be added. Please note that the array of already added person names will be appended to the prompt, so this can cost you many tokens.')
+  .action(functionCalling)
 
 program.parseAsync()
   .then(() => {
