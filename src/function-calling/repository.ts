@@ -7,7 +7,12 @@ import { Table } from "console-table-printer";
 import { Case } from "change-case-all";
 import { ChatCompletionSystemMessageParam } from "openai/src/resources/chat/completions";
 import { FnImplementation } from "./implementation";
-import { FilterByOccupation } from "./functions/filter-by-occupation";
+import { Filter } from "./functions/filter";
+import { normalize } from "../common/strings";
+import Predicate = Person.Predicate;
+import { Add } from "./functions/add";
+import { Edit } from "./functions/edit";
+import { Remove } from "./functions/remove";
 
 const REPOSITORY_PATH = join(GENERATED_DIR, 'persons.json');
 
@@ -29,11 +34,6 @@ export class Repository {
 
   at(index: number): Person | undefined {
     return this.items[index];
-  }
-
-  add(...persons: Person[]): void {
-    this.items.push(...persons);
-    this.store();
   }
 
   get length(): number {
@@ -68,7 +68,10 @@ export class Repository {
 
   getFunctions(): FnImplementation[] {
     return [
-      new FilterByOccupation(this)
+      new Add(this),
+      new Edit(this),
+      new Filter(this),
+      new Remove(this)
     ];
   }
 
@@ -85,11 +88,50 @@ export class Repository {
 
   // Functions callable by ChatGPT
 
-  filterByOccupation(occupations: string[]): Person[] {
-    const normalize = (str: string) => str.toLowerCase().trim();
-    const or = occupations.map(normalize);
+  add(...persons: Person[]): void {
+    this.items.push(...persons);
+    this.store();
+  }
+
+  edit(edit: Person.Edit): boolean {
+    const normalizedName = normalize(edit.fullName);
+    const person = this.items.find(p => normalize(p.fullName) === normalizedName);
+    if (!person) {
+      return false;
+    }
+    if ('salary' in edit) {
+      person.salary = edit.salary;
+    }
+    if ('occupation' in edit) {
+      person.occupation = edit.occupation;
+    }
+    this.store();
+    return true;
+  }
+
+  filter(filters: Filter.Input): Person[] {
+    const predicates: Predicate[] = [
+      filters?.fullNameLike ? (p: Person) => normalize(p.fullName).includes(normalize(filters.fullNameLike)) : null,
+      filters?.minAge ? (p: Person) => p.age >= filters.minAge : null,
+      filters?.maxAge ? (p: Person) => p.age <= filters.maxAge : null,
+      filters?.isRightHanded ? (p: Person) => p.isRightHanded === filters.isRightHanded : null,
+      filters?.occupation ? (p: Person) => normalize(p.occupation) === normalize(filters.occupation) : null,
+      filters?.minSalary ? (p: Person) => p.salary >= filters.minSalary : null,
+      filters?.maxSalary ? (p: Person) => p.salary <= filters.maxSalary : null,
+    ]
+      .filter(p => !!p);
     return this.items
-      .filter(p => or.includes(normalize(p.occupation)));
+      .filter(person => predicates.every(predicate => predicate(person)))
+  }
+
+  remove(fullName: string): boolean {
+    const normalizedName = normalize(fullName);
+    const index = this.items.findIndex(p => normalize(p.fullName) === normalizedName);
+    if (index === -1) {
+      return false;
+    }
+    this.items.splice(index, 1);
+    return true;
   }
 
   // Private

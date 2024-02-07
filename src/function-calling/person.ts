@@ -18,6 +18,16 @@ export class Person {
 
 }
 
+export namespace Person {
+
+  export type Predicate = (person: Person) => boolean;
+
+  export type Edit = Partial<Pick<Person, 'fullName' | 'occupation' | 'salary'>> & {
+    fullName: string;
+  }
+
+}
+
 export const HOW_MANY_PERSONS = 10;
 export const HOW_MANY_OCCUPATIONS = 10;
 export const PERSON_FIELDS = getPersonFields();
